@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.admin.traitementdimage.TD4">
+
+
+    <ImageView
+        android:id="@+id/imageID"
+        android:layout_width="380dp"
+        android:layout_height="428dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <Button
+        android:id="@+id/buttSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:onClick="buSave"
+        android:text="Save"
+        android:textAllCaps="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/buttGallery"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:clickable="true"
+        android:onClick="buGallery"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_gallery" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/buttCamera"
+        android:layout_width="90dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        android:onClick="buCamera"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_camera" />
+
+</android.support.constraint.ConstraintLayout>
