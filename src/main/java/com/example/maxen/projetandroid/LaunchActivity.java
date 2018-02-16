@@ -2,6 +2,7 @@ package com.example.maxen.projetandroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -10,4 +11,6 @@ public class LaunchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
     }
+
+
 }
