@@ -1,13 +1,13 @@
 package com.example.maxen.projetandroid;
 
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,11 +16,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageViewP imageView;
+  //  private ImageViewP imageView;
     private Image image;
     private Button toGray,egalHist, colorBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
+    private ImageView imageView;
 
     private ArrayList<Object> viewList;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         luminosityBar = (SeekBar) findViewById(R.id.seekBarLuminosity);
         egalHist = (Button) findViewById(R.id.egalhisto);
         colorBtn = (Button) findViewById(R.id.colorBtn);
+        imageView = (ImageView) findViewById(R.id.imageView);
 
         viewList = new ArrayList<Object>();
 
@@ -41,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         viewList.add(luminosityBar);
         viewList.add(egalHist);
         viewList.add(colorBtn);
+
+        Uri imageUri = getIntent().getData();
+        imageView.setImageURI(imageUri);
     }
 
 
