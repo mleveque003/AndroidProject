@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <!-- Settings, should always be in the overflow -->
+
+    <group android:checkableBehavior="single">
+
+
+    </group>
+
+    <item android:title="Filtres">
+        <menu>
+            <item
+                android:id="@+id/nav_gray"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/color_modifs"
+                android:onClick="clickToGray"/>
+            <item
+                android:id="@+id/nav_lum"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Luminosité"
+                android:onClick="clickLuminosity"/>
+         <!--  <item
+                android:id="@+id/nav_contrast"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Constraste"
+                android:onClick="clickConstrast"/> -->
+            <item
+                android:id="@+id/nav_egalhist"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Égalisation d'histogramme"
+                android:onClick="clickEgalisation"/>
+            <item
+                android:id="@+id/nav_coul"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Couleur"
+                android:onClick="clickCouleur"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/reset"
+        android:icon="@drawable/ic_menu_send"
+        android:title="Réinitialiser"
+        android:onClick="clickReset"/>
+
+</menu>

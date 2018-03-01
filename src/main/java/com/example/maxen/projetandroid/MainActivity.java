@@ -1,8 +1,12 @@
 package com.example.maxen.projetandroid;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,12 +20,12 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-  //  private ImageViewP imageView;
+    private ImageView imageView;
     private Image image;
-    private Button toGray,egalHist, colorBtn;
+    private Button toGray,egalHist, colorBtn,
+            luminosityBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
-    private ImageView imageView;
 
     private ArrayList<Object> viewList;
 
@@ -34,18 +38,27 @@ public class MainActivity extends AppCompatActivity {
         luminosityBar = (SeekBar) findViewById(R.id.seekBarLuminosity);
         egalHist = (Button) findViewById(R.id.egalhisto);
         colorBtn = (Button) findViewById(R.id.colorBtn);
+        luminosityBtn = (Button) findViewById(R.id.luminosityBtn);
         imageView = (ImageView) findViewById(R.id.imageView);
 
-        viewList = new ArrayList<Object>();
 
+        viewList = new ArrayList<Object>(); //This list is used to help in the reading of the code (it cancels redundant lines).
+        //TODO Later
         viewList.add(toGray);
         viewList.add(luminosityTv);
         viewList.add(luminosityBar);
         viewList.add(egalHist);
         viewList.add(colorBtn);
 
+        Bundle bundle = getIntent().getExtras();
+
         Uri imageUri = getIntent().getData();
         imageView.setImageURI(imageUri);
+
+        Bitmap bmp = BitmapFactory.decodeByteArray(
+                getIntent().getByteArrayExtra("picture"),0,getIntent().getByteArrayExtra("byteArray").length);
+        if(bmp != null)
+            imageView.setImageBitmap(bmp);
     }
 
 
@@ -68,10 +81,9 @@ public class MainActivity extends AppCompatActivity {
     * */
 
     public void clickToGray(MenuItem item) {
-        Toast.makeText(getApplicationContext(), "This is my Toast message!",
-                Toast.LENGTH_LONG).show(); //Delete when operationnal
         toGray.setVisibility(View.VISIBLE);
 
+        luminosityBtn.setVisibility(View.INVISIBLE);
         colorBtn.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
@@ -81,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
     public void clickLuminosity(MenuItem item) {
         luminosityBar.setVisibility(View.VISIBLE);
         luminosityTv.setVisibility(View.VISIBLE);
+        luminosityBtn.setVisibility(View.VISIBLE);
+
 
         colorBtn.setVisibility(View.INVISIBLE);
         toGray.setVisibility(View.INVISIBLE);
@@ -91,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickConstrast(MenuItem item) {
         //TODO
 
+        luminosityBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         colorBtn.setVisibility(View.INVISIBLE);
         toGray.setVisibility(View.INVISIBLE);
@@ -101,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickEgalisation(MenuItem item) {
         egalHist.setVisibility(View.VISIBLE);
 
+        luminosityBtn.setVisibility(View.INVISIBLE);
         colorBtn.setVisibility(View.INVISIBLE);
         toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
@@ -110,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickCouleur(MenuItem item) {
         colorBtn.setVisibility(View.VISIBLE);
 
+        luminosityBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
@@ -129,5 +146,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO
     }
 
-   
+
+    public void luminosityClick(View view) {
+    }
 }

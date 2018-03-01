@@ -3,6 +3,7 @@ package com.example.maxen.projetandroid;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -10,21 +11,38 @@ import android.provider.MediaStore;
 import android.os.Bundle;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 public class LaunchActivity extends AppCompatActivity {
 
+    private static final String FILE_NAME = "temp.jpg";
+
     private static final int REQUEST_IMAGE_PICTURE = 1;
     private static final int SELECT_FILE = 0;
     private Button bCharger;
     private Button bPrendrePhoto;
+    private ImageView img;
+    private Image image;
+    private Button toGray,egalHist, colorBtn,
+            luminosityBtn;
+    private TextView luminosityTv;
+    private SeekBar luminosityBar;
 
 
 
@@ -32,12 +50,26 @@ public class LaunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
+        toGray = (Button) findViewById(R.id.toGrayBtn);
+        luminosityTv = (TextView) findViewById(R.id.luminosityTv);
+        luminosityBar = (SeekBar) findViewById(R.id.seekBarLuminosity);
+        egalHist = (Button) findViewById(R.id.egalhisto);
+        colorBtn = (Button) findViewById(R.id.colorBtn);
+        luminosityBtn = (Button) findViewById(R.id.luminosityBtn);
+
 
         bCharger = (Button) findViewById(R.id.buttCharger);
         bPrendrePhoto = (Button) findViewById(R.id.buttPrendrePhoto);
+        img = (ImageView) findViewById(R.id.imageView);
+
     }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_launcher_drawer, menu);
+        return true;
+    }
 
 
     public void buCharger(View view) {
@@ -48,14 +80,14 @@ public class LaunchActivity extends AppCompatActivity {
 
     public void buPrendrePhoto(View view) {
 
-      /*  Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_IMAGE_PICTURE);
 
 
-        }*/
+        }
 
-      dispatchTakePictureIntent();
+     // dispatchTakePictureIntent();
     }
 
     String mCurrentPhotoPath;
@@ -99,6 +131,26 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
+    /*
+    startCamera() -> Start the camera to be able to take a photo
+     */
+    public void startCamera() {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            Uri photoUri = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", getCameraFile());
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivityForResult(intent, 1);
+    }
+
+
+    /*
+    getCameraFile() -> Returns the photo taken with the camera.
+     */
+    public File getCameraFile() {
+        File dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return new File(dir, FILE_NAME);
+    }
+
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(resultCode == RESULT_OK){
 
@@ -107,18 +159,95 @@ public class LaunchActivity extends AppCompatActivity {
                 Bundle extras = data.getExtras();
                 Bitmap bitmap = (Bitmap) extras.get("data");
 
+                img.setImageBitmap(bitmap);
+                image = new Image(bitmap);
+
             }
 
             if(requestCode == SELECT_FILE){
 
-                Uri selectImageUri = data.getData();
+                final Uri imageUri = data.getData();
+                final InputStream imageStream;
+                try {
+                    imageStream = getContentResolver().openInputStream(imageUri);
 
-                Intent intent = new Intent(LaunchActivity.this,MainActivity.class);
-                intent.setData(selectImageUri);
-                startActivity(intent);
+                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                img.setImageBitmap(selectedImage);
+                image = new Image(selectedImage);
+                }
+                catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
+    public void clickToGray(MenuItem item) {
+        toGray.setVisibility(View.VISIBLE);
+
+        luminosityBtn.setVisibility(View.INVISIBLE);
+        colorBtn.setVisibility(View.INVISIBLE);
+        luminosityBar.setVisibility(View.INVISIBLE);
+        luminosityTv.setVisibility(View.INVISIBLE);
+        egalHist.setVisibility(View.INVISIBLE);
+    }
+
+    public void clickLuminosity(MenuItem item) {
+        luminosityBar.setVisibility(View.VISIBLE);
+        luminosityTv.setVisibility(View.VISIBLE);
+        luminosityBtn.setVisibility(View.VISIBLE);
+
+
+        colorBtn.setVisibility(View.INVISIBLE);
+        toGray.setVisibility(View.INVISIBLE);
+        egalHist.setVisibility(View.INVISIBLE);
+        egalHist.setVisibility(View.INVISIBLE);
+    }
+
+
+
+    public void clickEgalisation(MenuItem item) {
+        egalHist.setVisibility(View.VISIBLE);
+
+        luminosityBtn.setVisibility(View.INVISIBLE);
+        colorBtn.setVisibility(View.INVISIBLE);
+        toGray.setVisibility(View.INVISIBLE);
+        luminosityBar.setVisibility(View.INVISIBLE);
+        luminosityTv.setVisibility(View.INVISIBLE);
+    }
+
+    public void clickCouleur(MenuItem item) {
+        colorBtn.setVisibility(View.VISIBLE);
+
+        luminosityBtn.setVisibility(View.INVISIBLE);
+        egalHist.setVisibility(View.INVISIBLE);
+        toGray.setVisibility(View.INVISIBLE);
+        luminosityBar.setVisibility(View.INVISIBLE);
+        luminosityTv.setVisibility(View.INVISIBLE);
+    }
+
+    public void luminosityClick(View view) {
+        img.setImageBitmap(image.updateLuminosity(luminosityBar.getMax(), luminosityBar.getProgress()));
+    }
+
+    public void egalHisto(View view) {
+        Bitmap bm = image.egalisationHistogramme();
+        if(bm != null)
+            img.setImageBitmap(bm);
+        else{
+            Toast.makeText(getApplicationContext(), "Erreur durant l'égalisation d'histogramme (essayez de passer l'image en niveau de gris).",
+                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public void clickToGrayBtn(View view) {
+        img.setImageBitmap(image.toGray());
+    }
+
+    public void clickReset(MenuItem item) {
+        img.setImageBitmap(image.getOriginalBitmap());
+        image.setBitmap(image.getOriginalBitmap());
+    }
 }
 
