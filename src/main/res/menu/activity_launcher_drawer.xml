@@ -13,20 +13,10 @@
     <item android:title="Filtres">
         <menu>
             <item
-                android:id="@+id/nav_gray"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/color_modifs"
-                android:onClick="clickToGray"/>
-            <item
                 android:id="@+id/nav_lum"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Luminosité"
                 android:onClick="clickLuminosity"/>
-         <!--  <item
-                android:id="@+id/nav_contrast"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Constraste"
-                android:onClick="clickConstrast"/> -->
             <item
                 android:id="@+id/nav_egalhist"
                 android:icon="@drawable/ic_menu_send"

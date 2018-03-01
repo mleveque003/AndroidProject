@@ -10,5 +10,6 @@ public interface Filtres {
     Bitmap toGray();
     Bitmap updateLuminosity(int max, int progress);
     Bitmap egalisationHistogramme();
-
+    Bitmap sepia();
+    Bitmap majorerRGB(int c);
 }

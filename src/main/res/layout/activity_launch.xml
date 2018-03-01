@@ -42,20 +42,6 @@
         app:layout_constraintTop_toBottomOf="@+id/buttPrendrePhoto"
         app:srcCompat="@mipmap/ic_launcher" />
 
-    <Button
-        android:id="@+id/toGrayBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="clickToGrayBtn"
-        android:text="Niveaux de gris + Contraste"
-        android:visibility="invisible"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
-
     <SeekBar
         android:id="@+id/seekBarLuminosity"
         android:layout_width="294dp"
@@ -103,11 +89,26 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Couleur"
+        android:text="Niveaux de gris + Contraste"
+        android:onClick="clickToGrayBtn"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <Button
+        android:id="@+id/sepia"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="sepia"
+        android:visibility="invisible"
+        android:text="Sepia"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/colorBtn" />
 
     <Button
         android:id="@+id/luminosityBtn"
@@ -122,5 +123,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seekBarLuminosity" />
+
+    <Button
+        android:id="@+id/majoRouge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:onClick="majorouge"
+        android:text="Rouge"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sepia" />
+
+    <Button
+        android:id="@+id/majoVert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="majovert"
+        android:visibility="invisible"
+        android:text="Vert"
+        app:layout_constraintEnd_toStartOf="@+id/majoRouge"
+        app:layout_constraintHorizontal_bias="0.659"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/majoRouge" />
+
+    <Button
+        android:id="@+id/majoBleu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="majobleu"
+        android:visibility="invisible"
+        android:text="Bleu"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/majoRouge"
+        app:layout_constraintTop_toTopOf="@+id/majoRouge" />
 
 </android.support.constraint.ConstraintLayout>

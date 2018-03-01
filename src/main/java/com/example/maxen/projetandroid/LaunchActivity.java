@@ -39,8 +39,8 @@ public class LaunchActivity extends AppCompatActivity {
     private Button bPrendrePhoto;
     private ImageView img;
     private Image image;
-    private Button toGray,egalHist, colorBtn,
-            luminosityBtn;
+    private Button egalHist, colorBtn,
+            luminosityBtn, sepiaBtn, redBtn, greenBtn, blueBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
 
@@ -50,12 +50,15 @@ public class LaunchActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-        toGray = (Button) findViewById(R.id.toGrayBtn);
         luminosityTv = (TextView) findViewById(R.id.luminosityTv);
         luminosityBar = (SeekBar) findViewById(R.id.seekBarLuminosity);
         egalHist = (Button) findViewById(R.id.egalhisto);
         colorBtn = (Button) findViewById(R.id.colorBtn);
         luminosityBtn = (Button) findViewById(R.id.luminosityBtn);
+        sepiaBtn = (Button) findViewById(R.id.sepia);
+        redBtn = (Button) findViewById(R.id.majoRouge);
+        greenBtn = (Button) findViewById(R.id.majoVert);
+        blueBtn = (Button) findViewById(R.id.majoBleu);
 
 
         bCharger = (Button) findViewById(R.id.buttCharger);
@@ -182,15 +185,6 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
-    public void clickToGray(MenuItem item) {
-        toGray.setVisibility(View.VISIBLE);
-
-        luminosityBtn.setVisibility(View.INVISIBLE);
-        colorBtn.setVisibility(View.INVISIBLE);
-        luminosityBar.setVisibility(View.INVISIBLE);
-        luminosityTv.setVisibility(View.INVISIBLE);
-        egalHist.setVisibility(View.INVISIBLE);
-    }
 
     public void clickLuminosity(MenuItem item) {
         luminosityBar.setVisibility(View.VISIBLE);
@@ -199,9 +193,12 @@ public class LaunchActivity extends AppCompatActivity {
 
 
         colorBtn.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
+        sepiaBtn.setVisibility(View.INVISIBLE);
+        redBtn.setVisibility(View.INVISIBLE);
+        greenBtn.setVisibility(View.INVISIBLE);
+        blueBtn.setVisibility(View.INVISIBLE);
     }
 
 
@@ -211,17 +208,23 @@ public class LaunchActivity extends AppCompatActivity {
 
         luminosityBtn.setVisibility(View.INVISIBLE);
         colorBtn.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
+        sepiaBtn.setVisibility(View.INVISIBLE);
+        redBtn.setVisibility(View.INVISIBLE);
+        greenBtn.setVisibility(View.INVISIBLE);
+        blueBtn.setVisibility(View.INVISIBLE);
     }
 
     public void clickCouleur(MenuItem item) {
         colorBtn.setVisibility(View.VISIBLE);
+        sepiaBtn.setVisibility(View.VISIBLE);
+        redBtn.setVisibility(View.VISIBLE);
+        greenBtn.setVisibility(View.VISIBLE);
+        blueBtn.setVisibility(View.VISIBLE);
 
         luminosityBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
     }
@@ -248,6 +251,22 @@ public class LaunchActivity extends AppCompatActivity {
     public void clickReset(MenuItem item) {
         img.setImageBitmap(image.getOriginalBitmap());
         image.setBitmap(image.getOriginalBitmap());
+    }
+
+    public void sepia(View view) {
+        img.setImageBitmap(image.sepia());
+    }
+
+    public void majobleu(View view) {
+        img.setImageBitmap(image.majorerRGB(3));
+    }
+
+    public void majovert(View view) {
+        img.setImageBitmap(image.majorerRGB(2));
+    }
+
+    public void majorouge(View view) {
+        img.setImageBitmap(image.majorerRGB(1));
     }
 }
 
