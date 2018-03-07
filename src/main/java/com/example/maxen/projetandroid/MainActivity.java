@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int SELECT_FILE = 0;
     private Image image;
-    private Button toGray, egalHist, colorBtn;
+    private Button egalHist, colorBtn;
     private Button redBtn, greenBtn, blueBtn, sypiaBtn, majBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toGray = (Button) findViewById(R.id.toGrayBtn);
+
         luminosityTv = (TextView) findViewById(R.id.luminosityTv);
         luminosityBar = (SeekBar) findViewById(R.id.seekBarLuminosity);
         egalHist = (Button) findViewById(R.id.egalhisto);
@@ -97,13 +97,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        viewList = new ArrayList<Object>(); //This list is used to help in the reading of the code (it cancels redundant lines).
-
-        viewList.add(toGray);
-        viewList.add(luminosityTv);
-        viewList.add(luminosityBar);
-        viewList.add(egalHist);
-        viewList.add(colorBtn);
 
     }
 
@@ -114,27 +107,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    public void clickInit(MenuItem item) {
-
-        imageView.setImageBitmap(image.getOriginalBitmap());
-        image.setBitmap(image.getOriginalBitmap());
-    }
-
-    public void clickToGray(MenuItem item) {
-        toGray.setVisibility(View.VISIBLE);
-
-        colorBtn.setVisibility(View.INVISIBLE);
-        luminosityBar.setVisibility(View.INVISIBLE);
-        luminosityTv.setVisibility(View.INVISIBLE);
-        egalHist.setVisibility(View.INVISIBLE);
-    }
-
     public void clickLuminosity(MenuItem item) {
         luminosityBar.setVisibility(View.VISIBLE);
         luminosityTv.setVisibility(View.VISIBLE);
 
         colorBtn.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         redBtn.setVisibility(View.INVISIBLE);
@@ -143,25 +120,11 @@ public class MainActivity extends AppCompatActivity {
         sypiaBtn.setVisibility(View.INVISIBLE);
     }
 
-    public void clickConstrast(MenuItem item) {
-        //TODO
-
-        egalHist.setVisibility(View.INVISIBLE);
-        colorBtn.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
-        luminosityBar.setVisibility(View.INVISIBLE);
-        luminosityTv.setVisibility(View.INVISIBLE);
-        redBtn.setVisibility(View.INVISIBLE);
-        greenBtn.setVisibility(View.INVISIBLE);
-        blueBtn.setVisibility(View.INVISIBLE);
-        sypiaBtn.setVisibility(View.INVISIBLE);
-    }
 
     public void clickEgalisation(MenuItem item) {
         egalHist.setVisibility(View.VISIBLE);
 
         colorBtn.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
         redBtn.setVisibility(View.INVISIBLE);
@@ -179,11 +142,47 @@ public class MainActivity extends AppCompatActivity {
 
 
         egalHist.setVisibility(View.INVISIBLE);
-        toGray.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
 
     }
+
+
+    public void clickMoyenneur(MenuItem item) {
+        int[][] mask = new int[3][3];
+
+        for(int i = 0; i< 3;i++)
+            for(int j = 0; j< 3;j++)
+                mask[i][j] = 1;
+
+        imageView.setImageBitmap(image.applyConvolution(mask));
+    }
+
+    public void clickGauss(MenuItem item) {
+        int[][] mask = {{1,2,3,2,1},
+                {2,6,8,6,2},
+                {3,8,10,8,3},
+                {2,6,8,6,2},
+                {1,2,3,2,1}};
+
+        imageView.setImageBitmap(image.applyConvolution(mask));
+    }
+
+    public void clickSobH(MenuItem item) {
+        int[][] mask = {{-1,0,1},{-2,0,2},{-1,0,1}};
+        imageView.setImageBitmap(image.applyConvolution(mask));
+    }
+
+    public void clickSobV(MenuItem item) {
+        int[][] mask = {{1,2,1},{0,0,0},{-1,-2,-1}};
+        imageView.setImageBitmap(image.applyConvolution(mask));
+    }
+
+    public void clickLaplacien(MenuItem item) {
+        int[][] mask = {{0,1,0},{1,-4,1},{0,1,0}};
+        imageView.setImageBitmap(image.applyConvolution(mask));
+    }
+
 
     public void clickToGrayBtn(View view) {
         imageView.setImageBitmap(image.toGray());
@@ -474,6 +473,17 @@ public class MainActivity extends AppCompatActivity {
 
         sb.append("]");
         Log.d("Touch Events ---------", sb.toString());
+    }
+
+
+    public void clickReset(MenuItem item) {
+        imageView.setImageBitmap(image.getOriginalBitmap());
+        image.setBitmap(image.getOriginalBitmap());
+    }
+
+
+    public void clickToGray(View view) {
+        imageView.setImageBitmap(image.toGray());
     }
 
 

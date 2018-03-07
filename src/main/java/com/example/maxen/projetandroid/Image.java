@@ -185,7 +185,7 @@ public class Image implements Filtres {
         return bmpSephia;
     }
 
-    public Bitmap majorerRGB(int c){ //c : 1 = rouge, 2 = vert, 3 = bleu
+    public Bitmap majorerRGB(int c){ //c : 1 = red, 2 = green, 3 = blue
         Bitmap bm = bitmap.copy(bitmap.getConfig(),true);
 
 
@@ -194,6 +194,7 @@ public class Image implements Filtres {
 
         for(int i = 0; i < pixels.length; ++i) {
             int pixel = pixels[i];
+
             switch (c) {
                 case 1:
 
@@ -240,4 +241,65 @@ public class Image implements Filtres {
         bitmap = bm;
         return bm;
     }
+
+    @Override
+    public Bitmap applyConvolution(int[][] mask){
+        int size = mask.length;
+
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        int[] pixels = new int[width *height];
+        int[] pixels2 = new int[width *height];
+        bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
+
+        int pixels2d[][] = new int[width][height];
+
+
+        for(int i=0; i<width;i++)  //A bit slower execution, but reading the code gets easier.
+            for(int j=0;j<height;j++)
+                pixels2d[i][j] = pixels[(j*width) + i];
+
+        int divide = 0;
+        for(int k = 0; k < size; k++){
+            for(int l = 0; l<size; l++){
+                divide += mask[k][l];
+            }
+        }
+        Log.d("TAG", Integer.toString(divide));
+
+
+
+        Bitmap bmC = bitmap.copy(bitmap.getConfig(),true);
+        for(int i = size/2; i< width - size/2; i++ ){
+            for(int j = size/2; j < height - size/2; j++){
+
+
+                int modifyPixelR = 0;
+                int modifyPixelG = 0;
+                int modifyPixelB = 0;
+                for(int k = 0; k < size; k++){
+                    for(int l = 0; l<size; l++){
+                        modifyPixelR+= mask[k][l]*Color.red(pixels2d[i+k-(size/2)][j+ l-(size/2)]);
+                        modifyPixelG+= mask[k][l]*Color.green(pixels2d[i+k-(size/2)][j+ l-(size/2)]);
+                        modifyPixelB+= mask[k][l]*Color.blue(pixels2d[i+k-(size/2)][j+ l-(size/2)]);
+
+                    }
+                }
+                if(divide != 0) {
+                    modifyPixelR /= divide;
+                    modifyPixelG /= divide;
+                    modifyPixelB /= divide;
+                }
+                int color = Color.rgb(modifyPixelR, modifyPixelG, modifyPixelB);
+
+                pixels[(j*width) + i]= color;
+
+
+            }
+        }
+        bmC.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        return bmC;
+    }
+
 }

@@ -67,7 +67,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:text="Couleur"
+        android:text="Niveaux de gris"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -75,7 +75,8 @@
         app:layout_constraintRight_toLeftOf="@+id/buttSypia"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.027" />
+        app:layout_constraintVertical_bias="0.027"
+        android:onClick="clickToGray"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/buttCamera"

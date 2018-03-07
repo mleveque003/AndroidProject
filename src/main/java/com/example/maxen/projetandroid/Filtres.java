@@ -12,4 +12,5 @@ public interface Filtres {
     Bitmap egalisationHistogramme();
     Bitmap sepia();
     Bitmap majorerRGB(int c);
+    Bitmap applyConvolution(int[][] mask);
 }
