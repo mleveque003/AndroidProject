@@ -39,5 +39,12 @@
                 android:onClick="clickCouleur"/>
         </menu>
     </item>
+    <item
+        android:id="@+id/initID"
+        android:icon="@android:drawable/btn_star_big_on"
+        android:title="Reinitialisation"
+        android:onClick="clickInit">
+
+    </item>
 
 </menu>

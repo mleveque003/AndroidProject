@@ -187,11 +187,11 @@ public class Image implements Filtres {
 
     public Bitmap majorerRGB(int c){ //c : 1 = rouge, 2 = vert, 3 = bleu
         Bitmap bm = bitmap.copy(bitmap.getConfig(),true);
-        
-        
+
+
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         bm.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        
+
         for(int i = 0; i < pixels.length; ++i) {
             int pixel = pixels[i];
             switch (c) {
