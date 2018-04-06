@@ -117,30 +117,40 @@ public class Image implements Filtres {
     public Bitmap egalisationHistogramme() {
         Bitmap bm = bitmap.copy(bitmap.getConfig(), true);
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
-        int histogram[] = new int[256];
         bm.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        for(int i = 0; i<pixels.length; i++){
-            if(Color.red(pixels[i]) != Color.green(pixels[i]) || Color.red(pixels[i]) != Color.blue(pixels[i])){
-                return null;
-            }
-            int pixel = Color.red(pixels[i]);
-            histogram[pixel]++;
+        int histogram[] = CalculHistogram(pixels);
+        int histoCumul[] = CalculHistoCumul(histogram);
+
+        int[] newPixels = new int[pixels.length];
+        for(int i =0; i<pixels.length; i++){
+            int red =(histoCumul[Color.red(pixels[i])]*255)/pixels.length;
+            int pixel = Color.rgb(red,red,red);
+            if(red>255 ||red<0)
+                Log.d("TAG", Integer.toString(red));
+            newPixels[i] = pixel;
+        }
+        bm.setPixels(newPixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        return bm;
+    }
+
+    private int[] CalculHistogram(int[] pixels){
+        int[] histogram = new int[256];
+        for(int i = 0; i < pixels.length; ++i){
+            int k = Color.red(pixels[i]);
+            histogram[k]++;
+        }
+        return histogram;
+    }
+
+    private int[] CalculHistoCumul(int[] histogram){
+        int histoCumul[] = new int[256];
+
+        for(int i = 1; i<256;++i){
+            histoCumul[i]=histogram[i]+histoCumul[i-1];
+            Log.e("TAG", "hist : " + Integer.toString(histogram[i]) + " cum : " + Integer.toString(histoCumul[i]));
         }
 
-        int histoCumul[] = new int[256];
-        histoCumul[0] = histogram[0];
-        for (int i=1; i<256; i++) {
-            histoCumul[i] = histoCumul[i-1] + histogram[i]; // calcul du cumul
-        }
-        for(int i = 0; i<pixels.length; i++){
-            pixels[i] = Color.rgb((histoCumul[Color.red(pixels[i])])/pixels.length,
-                    (histoCumul[Color.red(pixels[i])])/pixels.length,
-                    (histoCumul[Color.red(pixels[i])])/pixels.length);
-            Log.i("TAG", Integer.toString((histoCumul[Color.red(pixels[i])])/pixels.length));
-        }
-        bm.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        bitmap = bm;
-        return bm;
+        return histoCumul;
     }
 
     @Override

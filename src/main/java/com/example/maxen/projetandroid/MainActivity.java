@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickLuminosity(MenuItem item) {
         luminosityBar.setVisibility(View.VISIBLE);
         luminosityTv.setVisibility(View.VISIBLE);
+        majBtn.setVisibility(View.VISIBLE);
 
         colorBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
