@@ -9,9 +9,9 @@ import android.graphics.Bitmap;
 public interface Filtres {
     Bitmap toGray();
     Bitmap updateLuminosity(int max, int progress);
-    Bitmap egalisationHistogramme();
+    Bitmap histogramEqualization();
     Bitmap sepia();
-    Bitmap majorerRGB(int c);
+    Bitmap isolateRGB(int c);
     Bitmap applyConvolution(int[][] mask);
     Bitmap pencilEffect();
 }

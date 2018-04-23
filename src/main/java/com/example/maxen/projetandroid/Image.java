@@ -7,22 +7,16 @@ import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.util.Log;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by maxen on 09/02/2018.
+ * This class extends the filters interface and all the code is implemented here.
+ * The class contains every image calcultaion.
  */
 
 public class Image implements Filtres {
     private Bitmap bitmap;
     private Bitmap originalBitmap;
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
 
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
@@ -32,15 +26,18 @@ public class Image implements Filtres {
         return originalBitmap;
     }
 
-    public void setOriginalBitmap(Bitmap originalBitmap) {
-        this.originalBitmap = originalBitmap;
-    }
-
     Image(Bitmap bitmap) {
         this.bitmap = bitmap;
         this.originalBitmap = bitmap;
     }
 
+    /**
+     * Returns the grayscale of the actual bitmap on screen and replace the bitmap with this new image.
+     * The function will also stretch the grayscale which causes the image to have the lowest grayscale moved t 0 and the highest moved to 255.
+     * This permits to have a nicer greyscale image.
+     *
+     * @return the grayscale image
+     */
     @Override
     public Bitmap toGray() {
         int max = 0;
@@ -66,7 +63,6 @@ public class Image implements Filtres {
             if (R > max)
                 max = R;
             pixels[i] = Color.rgb(R, G, B);
-            int j = pixels[i];
 
         }
         int LUT[]= new int[256];
@@ -87,6 +83,15 @@ public class Image implements Filtres {
         return bm;
     }
 
+
+    /**
+     * Returns a new bitmap with adapted luminosity created from the progress bar.
+     * The method will basically make a percentage of the progress/max and multiply every pixel value in the image.
+     *
+     * @param max       max value of the luminosity seekbar
+     * @param progress  value of the pointer in the seekbar
+     * @return          the luminosity-modified image.
+     */
     @Override
     public Bitmap updateLuminosity(int max, int progress) {
         if(max != 0) {
@@ -113,13 +118,20 @@ public class Image implements Filtres {
         return null;
     }
 
+
+    /**
+     * Returns a grayscale image with an equalized histogram from a grayscale image.
+     * In order to equalize the histogram, we need to calculate the histogram and cumulated histogram of the image.
+     * Then, for each pixel, we have to calculate his value equalized and put it in a new bitmap which will be returned.
+     * @return the equalized image
+     */
     @Override
-    public Bitmap egalisationHistogramme() {
+    public Bitmap histogramEqualization() {
         Bitmap bm = bitmap.copy(bitmap.getConfig(), true);
         int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
         bm.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-        int histogram[] = CalculHistogram(pixels);
-        int histoCumul[] = CalculHistoCumul(histogram);
+        int histogram[] = histogramCalculation(pixels);
+        int histoCumul[] = histoCumulCalculation(histogram);
 
         int[] newPixels = new int[pixels.length];
         for(int i =0; i<pixels.length; i++){
@@ -133,7 +145,12 @@ public class Image implements Filtres {
         return bm;
     }
 
-    private int[] CalculHistogram(int[] pixels){
+    /**
+     * Calculates the histogram from a list of pixels.
+     * @param pixels    the list of pixels of the image
+     * @return          the image's histogram
+     */
+    private int[] histogramCalculation(int[] pixels){
         int[] histogram = new int[256];
         for(int i = 0; i < pixels.length; ++i){
             int k = Color.red(pixels[i]);
@@ -142,7 +159,12 @@ public class Image implements Filtres {
         return histogram;
     }
 
-    private int[] CalculHistoCumul(int[] histogram){
+    /**
+     * Calculates the cumulated histogram from the histogram.
+     * @param histogram the image's histogram
+     * @return          the image's cumulated histogram
+     */
+    private int[] histoCumulCalculation(int[] histogram){
         int histoCumul[] = new int[256];
 
         for(int i = 1; i<256;++i){
@@ -153,6 +175,13 @@ public class Image implements Filtres {
         return histoCumul;
     }
 
+    /**
+     * Calculates the image with a sepia filter from any given image.
+     * It is close to a grayscale filter but with the depth adding more green and red color, to get the "yellow" we
+     * get with a sephia filter.
+     * 
+     * @return the sephia filtered image
+     */
     @Override
     public Bitmap sepia() {
         int width, height, r,g, b, c, gry;
@@ -168,9 +197,12 @@ public class Image implements Filtres {
         ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
         paint.setColorFilter(f);
         canvas.drawBitmap(bitmap, 0, 0, paint);
-        for(int x=0; x < width; x++) {
-            for(int y=0; y < height; y++) {
-                c = bitmap.getPixel(x, y);
+
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bmpSephia.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for(int i=0; i < pixels.length; i++) {
+                c = pixels[i];
 
                 r = Color.red(c);
                 g = Color.green(c);
@@ -188,14 +220,19 @@ public class Image implements Filtres {
                 if(g > 255) {
                     g = 255;
                 }
-                bmpSephia.setPixel(x, y, Color.rgb(r, g, b));
-            }
+                pixels[i] = Color.rgb(r, g, b);
         }
+        bmpSephia.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         bitmap = bmpSephia;
         return bmpSephia;
     }
 
-    public Bitmap majorerRGB(int c){ //c : 1 = red, 2 = green, 3 = blue
+    /**
+     * Returns a bitmap, which, with one selected color, will isolate the pixels where the color is more present than the 2 others.
+     * @param c The color to isolate (1 = red, 2 = green, 3 = blue)
+     * @return  The image with 1 color isolated.
+     */
+    public Bitmap isolateRGB(int c){ //c : 1 = red, 2 = green, 3 = blue
         Bitmap bm = bitmap.copy(bitmap.getConfig(),true);
 
 
@@ -252,6 +289,12 @@ public class Image implements Filtres {
         return bm;
     }
 
+    /**
+     * Applies a convolution filter on the actual image.
+     * Uses the given mask to apply the convolution using the methos we saw during class
+     * @param mask  The mask to apply the convolution filter with, must be squared and any non-digit number size.
+     * @return      The image with the mask applied.
+     */
     @Override
     public Bitmap applyConvolution(int[][] mask){
         int size = mask.length;
@@ -314,6 +357,16 @@ public class Image implements Filtres {
         return bmC;
     }
 
+
+    /**
+     * Returns an image with a drawn-with-a-pencil effect. To do so, we :
+     * 1 - apply a gaussian convolution to reove noise
+     * 2 - turn the image to grayscale
+     * 3 - apply a laplacian convolution
+     * 4 - remove negative value
+     *
+     * @return  the image with the applied effect.
+     */
     @Override
     public Bitmap pencilEffect() {
         Bitmap bm = bitmap.copy(bitmap.getConfig(),true);

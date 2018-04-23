@@ -69,7 +69,15 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Object> viewList;
 
-
+/********************************** MUST READ *****************************************************
+*
+*
+*
+* ALL OF THESE FUNCTIONS ARE USED MOSTLY FOR THE USER INTERFACE, THERE ISN'T ANY CALCULATION HERE.
+*
+*
+*
+************************************************************************************************** */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -208,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void egalHisto(View view) {
-        Bitmap bm = image.egalisationHistogramme();
+        Bitmap bm = image.histogramEqualization();
         if(bm != null)
             imageView.setImageBitmap(bm);
         else{
@@ -349,15 +357,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void majobleu(View view) {
-        imageView.setImageBitmap(image.majorerRGB(3));
+        imageView.setImageBitmap(image.isolateRGB(3));
     }
 
     public void majovert(View view) {
-        imageView.setImageBitmap(image.majorerRGB(2));
+        imageView.setImageBitmap(image.isolateRGB(2));
     }
 
     public void majorouge(View view) {
-        imageView.setImageBitmap(image.majorerRGB(1));
+        imageView.setImageBitmap(image.isolateRGB(1));
     }
 
     public void luminosityClick(View view) {
