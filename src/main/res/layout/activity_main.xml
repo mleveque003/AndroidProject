@@ -132,7 +132,9 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="?attr/colorButtonNormal"
-        android:scaleType="matrix"/>
+        android:scaleType="matrix"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp" />
 
     <Button
         android:id="@+id/buttRed"

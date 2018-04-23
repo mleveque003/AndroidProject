@@ -18,6 +18,10 @@ public class Image implements Filtres {
     private Bitmap bitmap;
     private Bitmap originalBitmap;
 
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
+
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }

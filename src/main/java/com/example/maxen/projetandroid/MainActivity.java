@@ -2,13 +2,13 @@ package com.example.maxen.projetandroid;
 
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -27,10 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 
@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
     float oldDist = 1f;
 
 
-    private ArrayList<Object> viewList;
 
 /********************************** MUST READ *****************************************************
 *
@@ -135,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickEgalisation(MenuItem item) {
         egalHist.setVisibility(View.VISIBLE);
 
+        majBtn.setVisibility(View.INVISIBLE);
         colorBtn.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
         blueBtn.setVisibility(View.VISIBLE);
         sypiaBtn.setVisibility(View.VISIBLE);
 
+        majBtn.setVisibility(View.INVISIBLE);
         penBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
@@ -160,18 +161,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clickPen(MenuItem item) {
+        penBtn.setVisibility(View.VISIBLE);
+
         colorBtn.setVisibility(View.INVISIBLE);
         redBtn.setVisibility(View.INVISIBLE);
         greenBtn.setVisibility(View.INVISIBLE);
         blueBtn.setVisibility(View.INVISIBLE);
         sypiaBtn.setVisibility(View.INVISIBLE);
-
-
+        majBtn.setVisibility(View.INVISIBLE);
         egalHist.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
-
-        penBtn.setVisibility(View.VISIBLE);
     }
 
 
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createImageFile();
+                photoFile = createTempImageFile();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -254,23 +254,33 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
+    /** Create an image file name */
+    private static String getImageFileName(){
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        return  "JPEG_" + timeStamp + "_";
+    }
+
+    private File createImageFile() throws IOException {
+
+        String imageFileName = getImageFileName();
+        File storageDir = Environment.getExternalStoragePublicDirectory("MyFolder");
         if (!storageDir.exists())
             storageDir.mkdirs();
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        // Save a file: path for use with ACTION_VIEW intents
+
+        String filename = imageFileName + ".jpg";
+
+        return new File(storageDir,filename);
+
+    }
+
+    private File createTempImageFile() throws IOException {
+        String imageFileName = getImageFileName();
+
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
+
         mCurrentPhotoPath = image.getAbsolutePath();
-
         return image;
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -329,7 +339,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.setMessage("You sure to save your image ?");
         dialog.setButton("yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                startSave();
+                startSave(image.getBitmap());
             }
         });
 
@@ -342,14 +352,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void startSave(){
+    public void startSave(Bitmap myBitmap){
 
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.MediaColumns.DATA, mCurrentPhotoPath);
-        this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-        Toast.makeText(getApplicationContext(),"Image saved !", Toast.LENGTH_SHORT).show();
+        File f = null;
+        try{
+            f = createImageFile();
+            FileOutputStream fos = new FileOutputStream(f);
+            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.close();
+        }catch(IOException e){
+            Toast.makeText(getApplicationContext(),"Impossible to create the picture", Toast.LENGTH_SHORT).show();
+        }finally {
+            if (f != null){
+                // Add the new image to the user image gallery
+                MediaScannerConnection.scanFile(this,
+                        new String[]{f.toString()}, null,
+                        new MediaScannerConnection.OnScanCompletedListener() {
+                            public void onScanCompleted(String path, Uri uri) {
+                                Log.i("ExternalStorage", "Scanned " + path + ":");
+                                Log.i("ExternalStorage", "-> uri=" + uri);
+                            }
+                        });
+                Toast toast = Toast.makeText(this,"Image saved !",Toast.LENGTH_SHORT);
+                toast.show();
+            }
+
+        }
+
     }
 
     public void sepia(View view) {
@@ -441,7 +470,7 @@ public class MainActivity extends AppCompatActivity {
         return true; // indicate event was handled
     }
 
-    /*
+    /**
      * --------------------------------------------------------------------------
      * Method: spacing Parameters:
       * MotionEvent Returns: float
@@ -456,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
         return (float) Math.sqrt(x * x + y * y);
     }
 
-    /*
+    /**
      * --------------------------------------------------------------------------
      * Method: midPoint
      * Parameters: PointF object
