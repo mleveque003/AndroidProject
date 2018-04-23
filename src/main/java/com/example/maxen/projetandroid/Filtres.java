@@ -13,4 +13,5 @@ public interface Filtres {
     Bitmap sepia();
     Bitmap majorerRGB(int c);
     Bitmap applyConvolution(int[][] mask);
+    Bitmap pencilEffect();
 }

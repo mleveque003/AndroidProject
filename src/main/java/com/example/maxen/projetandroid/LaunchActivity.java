@@ -40,7 +40,7 @@ public class LaunchActivity extends AppCompatActivity {
     private ImageView img;
     private Image image;
     private Button egalHist, colorBtn,
-            luminosityBtn, sepiaBtn, redBtn, greenBtn, blueBtn;
+            luminosityBtn, sepiaBtn, redBtn, greenBtn, blueBtn, penBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
 
@@ -59,6 +59,7 @@ public class LaunchActivity extends AppCompatActivity {
         redBtn = (Button) findViewById(R.id.majoRouge);
         greenBtn = (Button) findViewById(R.id.majoVert);
         blueBtn = (Button) findViewById(R.id.majoBleu);
+        penBtn = (Button) findViewById(R.id.btnPen);
 
 
         bCharger = (Button) findViewById(R.id.buttCharger);

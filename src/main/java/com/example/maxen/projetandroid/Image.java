@@ -123,7 +123,7 @@ public class Image implements Filtres {
 
         int[] newPixels = new int[pixels.length];
         for(int i =0; i<pixels.length; i++){
-            int red =(histoCumul[Color.red(pixels[i])]*255)/pixels.length;
+            int red =(histoCumul[Color.red(pixels[i])]*256)/pixels.length;
             int pixel = Color.rgb(red,red,red);
             if(red>255 ||red<0)
                 Log.d("TAG", Integer.toString(red));
@@ -260,7 +260,7 @@ public class Image implements Filtres {
         int height = bitmap.getHeight();
 
         int[] pixels = new int[width *height];
-        int[] pixels2 = new int[width *height];
+
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 
         int pixels2d[][] = new int[width][height];
@@ -276,7 +276,7 @@ public class Image implements Filtres {
                 divide += mask[k][l];
             }
         }
-        Log.d("TAG", Integer.toString(divide));
+        Log.d("TAG divide", Integer.toString(divide));
 
 
 
@@ -301,6 +301,7 @@ public class Image implements Filtres {
                     modifyPixelG /= divide;
                     modifyPixelB /= divide;
                 }
+
                 int color = Color.rgb(modifyPixelR, modifyPixelG, modifyPixelB);
 
                 pixels[(j*width) + i]= color;
@@ -309,7 +310,48 @@ public class Image implements Filtres {
             }
         }
         bmC.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+        bitmap = bmC;
         return bmC;
+    }
+
+    @Override
+    public Bitmap pencilEffect() {
+        Bitmap bm = bitmap.copy(bitmap.getConfig(),true);
+
+        //Method followed :  AUTOMATIC GENERATION OF PENCIL-SKETCH LIKE DRAWINGS
+        //                   FROM PERSONAL PHOTOS.
+        // By Jin Zhou and Baoxin Li.
+        //https://pdfs.semanticscholar.org/0268/bc91c9e374062633af7481b4f2c04cca1db5.pdf
+        //Due to a lack of time and multiple problems, we had to modify the method to get something that looks like a pen effect but which isn't really respecting the method.
+
+
+        int[][] gaussMask = {{1,4,7,4,1},{4,16,26,16,4},{7,26,41,26,7},{4,16,26,16,4},{1,4,7,4,1}};
+        //Gaussian filter mask.
+        bm = applyConvolution(gaussMask);
+        //Using this mask helps removing the noise of an image.
+
+        bm = toGray();
+
+        int[][] laplaceMask = {{0,-1,0},{-1,4,-1},{0,-1,0}};
+        bm = applyConvolution(laplaceMask);
+
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for(int i = 0; i < pixels.length; ++i) {
+
+            int pix = pixels[i];
+
+            int R = Color.red(pix);
+
+            if(R <= 0){
+                pix = Color.rgb(255,255,255);
+            }
+            pixels[i] = pix;
+        }
+        bm.setPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        return bm;
     }
 
 }

@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int SELECT_FILE = 0;
     private Image image;
     private Button egalHist, colorBtn;
-    private Button redBtn, greenBtn, blueBtn, sypiaBtn, majBtn;
+    private Button redBtn, greenBtn, blueBtn, sypiaBtn, majBtn, penBtn;
     private TextView luminosityTv;
     private SeekBar luminosityBar;
     private ImageView imageView;
@@ -85,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         sypiaBtn = (Button) findViewById(R.id.buttSypia);
         majBtn = (Button) findViewById(R.id.buttMAJ);
         imageView = (ImageView) findViewById(R.id.imageView);
+        penBtn = (Button) findViewById(R.id.btnPen);
 
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         redBtn.setVisibility(View.INVISIBLE);
         greenBtn.setVisibility(View.INVISIBLE);
         blueBtn.setVisibility(View.INVISIBLE);
+        penBtn.setVisibility(View.INVISIBLE);
         sypiaBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
         greenBtn.setVisibility(View.INVISIBLE);
         blueBtn.setVisibility(View.INVISIBLE);
         sypiaBtn.setVisibility(View.INVISIBLE);
+        penBtn.setVisibility(View.INVISIBLE);
     }
 
     public void clickCouleur(MenuItem item) {
@@ -141,11 +144,26 @@ public class MainActivity extends AppCompatActivity {
         blueBtn.setVisibility(View.VISIBLE);
         sypiaBtn.setVisibility(View.VISIBLE);
 
+        penBtn.setVisibility(View.INVISIBLE);
+        egalHist.setVisibility(View.INVISIBLE);
+        luminosityBar.setVisibility(View.INVISIBLE);
+        luminosityTv.setVisibility(View.INVISIBLE);
+
+    }
+
+    public void clickPen(MenuItem item) {
+        colorBtn.setVisibility(View.INVISIBLE);
+        redBtn.setVisibility(View.INVISIBLE);
+        greenBtn.setVisibility(View.INVISIBLE);
+        blueBtn.setVisibility(View.INVISIBLE);
+        sypiaBtn.setVisibility(View.INVISIBLE);
+
 
         egalHist.setVisibility(View.INVISIBLE);
         luminosityBar.setVisibility(View.INVISIBLE);
         luminosityTv.setVisibility(View.INVISIBLE);
 
+        penBtn.setVisibility(View.VISIBLE);
     }
 
 
@@ -485,6 +503,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void clickToGray(View view) {
         imageView.setImageBitmap(image.toGray());
+    }
+
+
+    public void btnClickPen(View view) {
+        imageView.setImageBitmap(image.pencilEffect());
     }
 
 

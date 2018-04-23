@@ -27,6 +27,11 @@
                 android:icon="@drawable/ic_menu_send"
                 android:title="Couleur"
                 android:onClick="clickCouleur"/>
+            <item
+            android:id="@+id/nav_pen"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Effet Crayon"
+            android:onClick="clickPen"/>
         </menu>
     </item>
 
