@@ -1,21 +1,16 @@
 package com.example.maxen.projetandroid;
 
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PointF;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,11 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -44,12 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView luminosityTv;
     private SeekBar luminosityBar;
     private ImageView imageView;
-    private AlertDialog dialog;
-    private String mCurrentPhotoPath;
 
-    private static final String TAG = "Touch";
-    @SuppressWarnings("unused")
-    private static final float MIN_ZOOM = 1f,MAX_ZOOM = 1f;
+
 
     // These matrices will be used to scale points of the image
     Matrix matrix = new Matrix();
@@ -103,8 +91,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-
 
     }
 
@@ -210,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(image.applyConvolution(mask));
     }
 
-
     public void clickToGrayBtn(View view) {
         imageView.setImageBitmap(image.toGray());
     }
@@ -239,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             // Create the File where the photo should go
             File photoFile = null;
             try {
-                photoFile = createTempImageFile();
+                photoFile = ImageFile.createTempImageFile(this);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -254,35 +239,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** Create an image file name */
-    private static String getImageFileName(){
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        return  "JPEG_" + timeStamp + "_";
-    }
-
-    private File createImageFile() throws IOException {
-
-        String imageFileName = getImageFileName();
-        File storageDir = Environment.getExternalStoragePublicDirectory("MyFolder");
-        if (!storageDir.exists())
-            storageDir.mkdirs();
-
-        String filename = imageFileName + ".jpg";
-
-        return new File(storageDir,filename);
-
-    }
-
-    private File createTempImageFile() throws IOException {
-        String imageFileName = getImageFileName();
-
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
@@ -295,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
                     // Get the dimensions of the bitmap
                     BitmapFactory.Options bmOptions = new BitmapFactory.Options();
                     bmOptions.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+                    BitmapFactory.decodeFile(ImageFile.getmCurrentPhotoPath(), bmOptions);
                     int photoW = bmOptions.outWidth;
                     int photoH = bmOptions.outHeight;
 
@@ -307,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
                     bmOptions.inSampleSize = scaleFactor;
                     bmOptions.inPurgeable = true;
 
-                    Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+                    Bitmap bitmap = BitmapFactory.decodeFile(ImageFile.getmCurrentPhotoPath(), bmOptions);
                     imageView.setImageBitmap(bitmap);
                     image = new Image(bitmap);
                     break;
@@ -334,50 +290,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void buSave(View view) {
 
-        dialog = new AlertDialog.Builder(this).create();
-        dialog.setTitle("Save Image");
-        dialog.setMessage("You sure to save your image ?");
-        dialog.setButton("yes", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                startSave(image.getBitmap());
-            }
-        });
-
-        dialog.setButton2("no", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
-
-    }
-
-    public void startSave(Bitmap myBitmap){
-
-        File f = null;
-        try{
-            f = createImageFile();
-            FileOutputStream fos = new FileOutputStream(f);
-            myBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.close();
-        }catch(IOException e){
-            Toast.makeText(getApplicationContext(),"Impossible to create the picture", Toast.LENGTH_SHORT).show();
-        }finally {
-            if (f != null){
-                // Add the new image to the user image gallery
-                MediaScannerConnection.scanFile(this,
-                        new String[]{f.toString()}, null,
-                        new MediaScannerConnection.OnScanCompletedListener() {
-                            public void onScanCompleted(String path, Uri uri) {
-                                Log.i("ExternalStorage", "Scanned " + path + ":");
-                                Log.i("ExternalStorage", "-> uri=" + uri);
-                            }
-                        });
-                Toast toast = Toast.makeText(this,"Image saved !",Toast.LENGTH_SHORT);
-                toast.show();
-            }
-
-        }
+        ImageFile.startSave(image.getBitmap(),this);
 
     }
 
@@ -401,13 +314,11 @@ public class MainActivity extends AppCompatActivity {
         imageView.setImageBitmap(image.updateLuminosity(luminosityBar.getMax(), luminosityBar.getProgress()));
     }
 
-    public boolean zoomInZoomOut(View v, MotionEvent event)
-    {
+    public boolean zoomInZoomOut(View v, MotionEvent event) {
         ImageView view = (ImageView) v;
         view.setScaleType(ImageView.ScaleType.MATRIX);
         float scale;
 
-        dumpEvent(event);
         // Handle touch events here...
 
         switch (event.getAction() & MotionEvent.ACTION_MASK)
@@ -416,7 +327,6 @@ public class MainActivity extends AppCompatActivity {
                 matrix.set(view.getImageMatrix());
                 savedMatrix.set(matrix);
                 start.set(event.getX(), event.getY());
-                Log.d(TAG, "mode=DRAG"); // write to LogCat
                 mode = DRAG;
                 break;
 
@@ -425,18 +335,15 @@ public class MainActivity extends AppCompatActivity {
             case MotionEvent.ACTION_POINTER_UP: // second finger lifted
 
                 mode = NONE;
-                Log.d(TAG, "mode=NONE");
                 break;
 
             case MotionEvent.ACTION_POINTER_DOWN: // first and second finger down
 
                 oldDist = spacing(event);
-                Log.d(TAG, "oldDist=" + oldDist);
                 if (oldDist > 5f) {
                     savedMatrix.set(matrix);
                     midPoint(mid, event);
                     mode = ZOOM;
-                    Log.d(TAG, "mode=ZOOM");
                 }
                 break;
 
@@ -451,14 +358,13 @@ public class MainActivity extends AppCompatActivity {
                 {
                     // pinch zooming
                     float newDist = spacing(event);
-                    Log.d(TAG, "newDist=" + newDist);
                     if (newDist > 5f)
                     {
                         matrix.set(savedMatrix);
-                        scale = newDist / oldDist; // setting the scaling of the
-                        // matrix...if scale > 1 means
-                        // zoom in...if scale < 1 means
-                        // zoom out
+                        scale = newDist / oldDist;
+                        /* setting the scaling of the matrix...
+                           if scale > 1 means zoom in...
+                           if scale < 1 means zoom out */
                         matrix.postScale(scale, scale, mid.x, mid.y);
                     }
                 }
@@ -478,8 +384,7 @@ public class MainActivity extends AppCompatActivity {
      * ----------------------------------------------------
      */
 
-    private float spacing(MotionEvent event)
-    {
+    private float spacing(MotionEvent event) {
         float x = event.getX(0) - event.getX(1);
         float y = event.getY(0) - event.getY(1);
         return (float) Math.sqrt(x * x + y * y);
@@ -494,41 +399,10 @@ public class MainActivity extends AppCompatActivity {
      * ------------------------------------------------------------
      */
 
-    private void midPoint(PointF point, MotionEvent event)
-    {
+    private void midPoint(PointF point, MotionEvent event) {
         float x = event.getX(0) + event.getX(1);
         float y = event.getY(0) + event.getY(1);
         point.set(x / 2, y / 2);
-    }
-
-    /** Show an event in the LogCat view, for debugging */
-    private void dumpEvent(MotionEvent event)
-    {
-        String names[] = { "DOWN", "UP", "MOVE", "CANCEL", "OUTSIDE","POINTER_DOWN", "POINTER_UP", "7?", "8?", "9?" };
-        StringBuilder sb = new StringBuilder();
-        int action = event.getAction();
-        int actionCode = action & MotionEvent.ACTION_MASK;
-        sb.append("event ACTION_").append(names[actionCode]);
-
-        if (actionCode == MotionEvent.ACTION_POINTER_DOWN || actionCode == MotionEvent.ACTION_POINTER_UP)
-        {
-            sb.append("(pid ").append(action >> MotionEvent.ACTION_POINTER_ID_SHIFT);
-            sb.append(")");
-        }
-
-        sb.append("[");
-        for (int i = 0; i < event.getPointerCount(); i++)
-        {
-            sb.append("#").append(i);
-            sb.append("(pid ").append(event.getPointerId(i));
-            sb.append(")=").append((int) event.getX(i));
-            sb.append(",").append((int) event.getY(i));
-            if (i + 1 < event.getPointerCount())
-                sb.append(";");
-        }
-
-        sb.append("]");
-        Log.d("Touch Events ---------", sb.toString());
     }
 
 
